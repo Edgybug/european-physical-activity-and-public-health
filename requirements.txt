@@ -4,4 +4,4 @@ matplotlib
 seaborn
 requests
 jupyter
-dvc
+dvc[s3]
