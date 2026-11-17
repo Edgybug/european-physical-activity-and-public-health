@@ -1,0 +1,5 @@
+[core]
+    remote = origin
+['remote "origin"']
+    url = s3://dvc
+    endpointurl = https://dagshub.com/Edgybug/european-physical-activity-and-public-health.s3
