@@ -1,0 +1,5 @@
+outs:
+- md5: 65153d41c950011db888b44550cb058d
+  size: 11292
+  hash: md5
+  path: eurostat_obesity.json

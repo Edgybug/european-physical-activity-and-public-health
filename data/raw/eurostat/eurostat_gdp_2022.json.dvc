@@ -1,0 +1,5 @@
+outs:
+- md5: cf3f126d198abbdea34982e547e851d5
+  size: 7525
+  hash: md5
+  path: eurostat_gdp_2022.json
