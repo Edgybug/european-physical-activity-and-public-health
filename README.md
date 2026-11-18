@@ -19,13 +19,16 @@ The project uses statistical analysis and data visualization to explore relation
 The project uses the following datasets:
 
 - **WHO – Physical inactivity:** Prevalence of insufficient physical activity among adults, age-standardized estimates.
+  - Indicator code: `NCD_PAA`
   - [WHO indicator documentation](https://www.who.int/data/gho/data/indicators/indicator-details/GHO/prevalence-of-insufficient-physical-activity-among-adults-aged-18-years-%28age-standardized-estimate%29-%28-%29)
+
 - **Eurostat – Obesity prevalence:** Adult obesity prevalence (BMI ≥ 30).
   - Dataset: `sdg_02_10`
+
 - **Eurostat – GDP per capita:** GDP per capita at current market prices, expressed in EUR per inhabitant.
   - Dataset: `nama_10_pc`
 
-All datasets are based on the reference year 2022.
+The analysis uses 2022 as its reference year. Raw datasets may contain observations from additional years.
 
 ## Project Structure
 
@@ -37,6 +40,9 @@ physical-activity-public-health/
 │   └── processed/           # Cleaned and transformed datasets
 │
 ├── notebooks/               # Jupyter notebooks
+│
+├── scripts/                 # Reusable Python scripts
+│   └── download_data.py
 │
 ├── .dvc/                    # DVC configuration
 ├── .dvcignore
@@ -91,20 +97,28 @@ source .venv/bin/activate
 
 ```bash
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
-### 5. Retrieve the datasets
+### 5. Download the datasets
 
-The raw datasets are stored remotely using DVC and DagsHub rather than directly in Git.
+The original datasets can be retrieved directly from their respective public sources using the provided download script.
 
-Download the datasets into the project directory with:
+Run:
 
 ```bash
-dvc pull
+python scripts/download_data.py
 ```
 
-If authentication is requested, follow the DagsHub authentication instructions.
+The script downloads the WHO physical inactivity data and both Eurostat datasets into `data/raw/`.
+
+Existing files are not overwritten by default. To download the datasets again and replace existing files, use:
+
+```bash
+python scripts/download_data.py --force
+```
+
+DagsHub credentials are not required to retrieve the original datasets.
 
 ### 6. Run the notebooks
 
@@ -120,9 +134,11 @@ Open the notebooks in the `notebooks/` directory and execute them in the intende
 
 - Git tracks source code, notebooks, documentation, and DVC metadata.
 - DVC tracks the raw datasets and their versions.
-- DagsHub provides remote storage for the datasets.
+- DagsHub provides remote storage for the datasets used during project development.
 
-This separation keeps the Git repository lightweight while preserving data reproducibility.
+The original public data sources and download script provide an alternative way to retrieve the raw datasets without requiring access to the DagsHub remote.
+
+This separation keeps the Git repository lightweight while supporting data versioning and reproducibility.
 
 ## Project Status
 
