@@ -40,7 +40,7 @@ physical-activity-public-health/
 │   └── processed/           # Cleaned and transformed datasets
 │
 ├── notebooks/               # Jupyter notebooks
-│
+│   └── data_exploartion.ipynb
 ├── scripts/                 # Reusable Python scripts
 │   └── download_data.py
 │
