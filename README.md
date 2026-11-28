@@ -2,13 +2,19 @@
 
 ## Project Overview
 
-This project investigates the relationship between physical inactivity, obesity prevalence, and economic development across European countries.
+This project examines country-level associations between physical inactivity, obesity prevalence, and GDP per capita across countries in the WHO European Region.
 
-The analysis focuses on 2022 and combines data from two independent sources: the World Health Organization (WHO) and Eurostat.
+The analysis uses 2022 data from the World Health Organization (WHO) and Eurostat. It combines data preparation, exploratory data analysis, correlation analysis, statistical hypothesis testing, and data visualisation.
 
-The project uses statistical analysis and data visualization to explore relationships between these indicators. The analysis is observational and focuses on country-level comparisons; it does not attempt to establish causal relationships.
+The final analytical dataset contains **35 countries** with complete observations for all three indicators. The project is observational and cross-sectional; it investigates associations and does not establish causal relationships.
 
 ## Research Questions
+
+The main research question is:
+
+**How are physical inactivity, obesity prevalence, and GDP per capita associated across European countries?**
+
+The analysis addresses three specific questions:
 
 1. Is physical inactivity associated with obesity prevalence?
 2. Is GDP per capita associated with physical inactivity?
@@ -16,19 +22,42 @@ The project uses statistical analysis and data visualization to explore relation
 
 ## Data Sources
 
-The project uses the following datasets:
+The project uses three indicators from two independent public data sources.
 
-- **WHO – Physical inactivity:** Prevalence of insufficient physical activity among adults, age-standardized estimates.
-  - Indicator code: `NCD_PAA`
-  - [WHO indicator documentation](https://www.who.int/data/gho/data/indicators/indicator-details/GHO/prevalence-of-insufficient-physical-activity-among-adults-aged-18-years-%28age-standardized-estimate%29-%28-%29)
+### World Health Organization (WHO)
 
-- **Eurostat – Obesity prevalence:** Adult obesity prevalence (BMI ≥ 30).
+- **Indicator:** Prevalence of insufficient physical activity among adults aged 18 years and over (age-standardized estimate).
+- **Indicator code:** `NCD_PAA`
+- **Measure:** Percentage of adults with insufficient physical activity.
+- **Source:** [WHO indicator documentation](https://www.who.int/data/gho/data/indicators/indicator-details/GHO/prevalence-of-insufficient-physical-activity-among-adults-aged-18-years-%28age-standardized-estimate%29-%28-%29)
+
+### Eurostat
+
+- **Obesity prevalence:** Adult obesity prevalence (BMI ≥ 30).
   - Dataset: `sdg_02_10`
-
-- **Eurostat – GDP per capita:** GDP per capita at current market prices, expressed in EUR per inhabitant.
+  - [Eurostat dataset](https://ec.europa.eu/eurostat/databrowser/view/sdg_02_10/default/table?lang=en)
+- **GDP per capita:** GDP at current market prices, expressed in euros per inhabitant.
   - Dataset: `nama_10_pc`
+  - [Eurostat dataset](https://ec.europa.eu/eurostat/databrowser/view/nama_10_pc/default/table?lang=en)
 
-The analysis uses 2022 as its reference year. Raw datasets may contain observations from additional years.
+All three indicators refer to **2022**. GDP per capita is expressed in current euros and is not adjusted for purchasing power standards (PPS).
+
+## Methodology and Analysis
+
+The project is organised into two Jupyter notebooks:
+
+1. **`01_data_preparation.ipynb`** — explores the raw WHO and Eurostat datasets, extracts the relevant 2022 observations, examines data quality and geographical coverage, standardises country identifiers, validates the analytical variables, establishes the common 35-country sample, and integrates the datasets into a processed analytical dataset.
+2. **`02_statistical_analysis.ipynb`** — performs exploratory data analysis, examines distributions and potential outliers, calculates Pearson and Spearman correlations, conducts correlation hypothesis tests, applies Holm's correction for multiple testing, visualises the relationships, and discusses the conclusions and limitations.
+
+Spearman correlation is treated as the primary correlation measure in the interpretation, with Pearson correlation used as a complementary analysis. Statistical significance is assessed at the 0.05 level, with Holm correction applied to the three primary Spearman tests.
+
+## Main Findings
+
+The analysis identifies a moderate negative monotonic association between GDP per capita and physical inactivity across the 35 countries. This association remains statistically significant after Holm correction (Spearman's ρ ≈ -0.41; adjusted p-value ≈ 0.043).
+
+The analysis does not find statistically significant evidence of an association between physical inactivity and obesity prevalence, or between GDP per capita and obesity prevalence, after correction for multiple testing.
+
+These are country-level associations and should not be interpreted as evidence of individual-level relationships or causation.
 
 ## Project Structure
 
@@ -36,38 +65,43 @@ The analysis uses 2022 as its reference year. Raw datasets may contain observati
 physical-activity-public-health/
 │
 ├── data/
-│   ├── raw/                 # Original datasets tracked with DVC
-│   └── processed/           # Cleaned and transformed datasets
+│   ├── raw/
+│   │   ├── who/                 # WHO source data (tracked with DVC)
+│   │   └── eurostat/            # Eurostat source data (tracked with DVC)
+│   └── processed/
+│       └── analysis_dataset.csv # Integrated 35-country analytical dataset
 │
-├── notebooks/               # Jupyter notebooks
-│   └── data_exploartion.ipynb
-├── scripts/                 # Reusable Python scripts
-│   └── download_data.py
+├── notebooks/
+│   ├── 01_data_preparation.ipynb
+│   └── 02_statistical_analysis.ipynb
 │
-├── .dvc/                    # DVC configuration
+├── scripts/
+│   └── download_data.py         # Downloads the original public datasets
+│
 ├── .dvcignore
 ├── .gitignore
 ├── README.md
 └── requirements.txt
 ```
 
+The raw datasets and processed analytical CSV are managed with DVC. The `.dvc` directory contains local DVC configuration and is not required when retrieving the source data using the download script.
+
 ## Technologies
 
 - Python
-- Pandas
-- NumPy
-- Matplotlib
-- Seaborn
+- Pandas and NumPy
+- Matplotlib and Seaborn
+- SciPy and Statsmodels
+- PyCountry
 - Jupyter Notebook
 - Git and GitHub
-- DVC (Data Version Control)
-- DagsHub (DVC remote storage)
+- DVC
 
 ## Setup and Reproducing the Project
 
 ### 1. Prerequisites
 
-- Python
+- Python (the project has been developed with Python 3.x)
 - Git
 
 ### 2. Clone the repository
@@ -77,13 +111,13 @@ git clone https://github.com/Edgybug/european-physical-activity-and-public-healt
 cd european-physical-activity-and-public-health
 ```
 
-### 3. Create a virtual environment
+### 3. Create and activate a virtual environment
 
-Windows:
+Windows (PowerShell):
 
 ```powershell
 python -m venv .venv
-.venv\Scripts\activate
+.venv\Scripts\Activate.ps1
 ```
 
 macOS / Linux:
@@ -100,25 +134,21 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-### 5. Download the datasets
+### 5. Download the raw datasets
 
-The original datasets can be retrieved directly from their respective public sources using the provided download script.
-
-Run:
+The original WHO and Eurostat datasets can be downloaded from their public sources using the provided script:
 
 ```bash
 python scripts/download_data.py
 ```
 
-The script downloads the WHO physical inactivity data and both Eurostat datasets into `data/raw/`.
-
-Existing files are not overwritten by default. To download the datasets again and replace existing files, use:
+The script saves the datasets in the appropriate subdirectories under `data/raw/`. Existing files are not overwritten by default. To download the datasets again and replace existing files, run:
 
 ```bash
 python scripts/download_data.py --force
 ```
 
-DagsHub credentials are not required to retrieve the original datasets.
+This source-download workflow does not require DagsHub credentials.
 
 ### 6. Run the notebooks
 
@@ -128,18 +158,28 @@ Start Jupyter:
 jupyter notebook
 ```
 
-Open the notebooks in the `notebooks/` directory and execute them in the intended order.
+Run the notebooks in this order:
 
-## Data Management
+1. `notebooks/01_data_preparation.ipynb`
+2. `notebooks/02_statistical_analysis.ipynb`
 
-- Git tracks source code, notebooks, documentation, and DVC metadata.
-- DVC tracks the raw datasets and their versions.
-- DagsHub provides remote storage for the datasets used during project development.
+The first notebook creates `data/processed/analysis_dataset.csv`, which is loaded by the second notebook.
 
-The original public data sources and download script provide an alternative way to retrieve the raw datasets without requiring access to the DagsHub remote.
+## Data and Version Control
 
-This separation keeps the Git repository lightweight while supporting data versioning and reproducibility.
+- Git tracks the notebooks, scripts, documentation, dependency list, and DVC metadata.
+- DVC tracks the raw datasets and the processed analytical dataset.
+- DagsHub is used as the DVC remote for project data versioning.
+- Alternatively, the public-source download script can retrieve the original raw datasets without DagsHub access.
+
+## Limitations
+
+- The final analysis uses 35 countries with complete observations across all three indicators; this is not the full set of countries in the WHO European Region.
+- The data represent a single year (2022), so the analysis cannot establish trends over time.
+- Country-level results cannot be assumed to describe relationships between individuals (ecological fallacy).
+- Correlation does not establish causation, and other factors may influence the observed relationships.
+- GDP per capita is measured in current euros and is not adjusted for differences in purchasing power between countries.
 
 ## Project Status
 
-The project is currently in the data exploration and preparation phase. Further analysis, statistical methods, and visualizations will be added as the project develops.
+The data preparation, integration, exploratory analysis, statistical testing, visualisations, conclusions, and limitations are documented in the two notebooks. The project is in its final review and submission-preparation stage.
