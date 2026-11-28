@@ -6,3 +6,4 @@ requests
 jupyter
 dvc[s3]
 pycountry
+statsmodels
